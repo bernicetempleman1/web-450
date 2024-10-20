@@ -1,0 +1,14 @@
+# IDE extensions
+.vscode
+*/*/.vscode 
+.vscode/*
+.idea/*
+*.iml
+
+# node
+node_module
+.node_repl_history
+
+# macOS
+.DS_Store
+*/.DS_Store
