@@ -3,6 +3,8 @@
  * Date: 7 August 2024
  * File: index.js
  * Description: Routing for the index page.
+ *
+ * mongodb+srv://<db_username>:<db_password>@bellevueuniversity.lftytpq.mongodb.net/?retryWrites=true&w=majority&appName=BellevueUniversity
  */
 
 // require statements
