@@ -17,8 +17,8 @@ describe('app.js', () => {
   it('should set CORS headers', async () => {
     const response = await request(app).get('/api');
     expect(response.headers['access-control-allow-origin']).toBe('*');
-    expect(response.headers['access-control-allow-methods']).toBe('GET, POST, PUT, DELETE, OPTIONS');
-    expect(response.headers['access-control-allow-headers']).toBe('Origin, X-Requested-With, Content-Type, Accept');
+    expect(response.headers['access-control-allow-methods']).toBe('GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    expect(response.headers['access-control-allow-headers']).toBe('Origin, X-Requested-With, Content-Type,Accept');
   });
 
   // Test the 500 error handler

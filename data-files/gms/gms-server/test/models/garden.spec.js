@@ -8,7 +8,7 @@ beforeAll(async () => {
     'mongodb+srv://gms_user:s3cret@bellevueuniversity.lftytpq.mongodb.net/?retryWrites=true&w=majority&appName=BellevueUniversity';
   try {
     await mongoose.connect(connectionString, {
-      dbName: "gms",
+      dbName: "gms"
     });
     console.log("Connection to the database instance was successful");
   } catch (err) {
