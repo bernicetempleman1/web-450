@@ -1,6 +1,12 @@
 const express = require("express");
+const Ajv = require("ajv");
+const createError = require("http-errors");
 const router = express.Router();
 const { Garden } = require("../../models/garden");
+const ajv = new Ajv();
+const { addGardenSchema, updateGardenSchema } = require("../../schemas");
+const validateAddGarden = ajv.compile(addGardenSchema);
+const validateUpdateGarden = ajv.compile(updateGardenSchema);
 
 router.get("/", async (req, res, next) => {
   try {
@@ -12,8 +18,22 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/:gardenId", async (req, res, next) => {
+  try {
+    const garden = await Garden.findOne({ gardenId: req.params.gardenId });
+    res.send(garden);
+  } catch (err) {
+    console.error(`Error while getting garden: ${err}`);
+    next(err);
+  }
+});
+
 router.post("/", async (req, res, next) => {
   try {
+    const valid = validateAddGarden(req.body);
+    if (!valid) {
+      return next(createError(400, ajv.errorsText(validateAddGarden.errors)));
+    }
     const newGarden = new Garden(req.body);
     await newGarden.save();
     res.send({
@@ -29,6 +49,12 @@ router.post("/", async (req, res, next) => {
 router.patch("/:gardenId", async (req, res, next) => {
   try {
     const garden = await Garden.findOne({ gardenId: req.params.gardenId });
+    const valid = validateUpdateGarden(req.body);
+    if (!valid) {
+      return next(
+        createError(400, ajv.errorsText(validateUpdateGarden.errors))
+      );
+    }
     garden.set({
       name: req.body.name,
       location: req.body.location,
