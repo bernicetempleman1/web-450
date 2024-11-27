@@ -1,29 +1,28 @@
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
-
+import { RouterTestingModule } from '@angular/router/testing';
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AppComponent],
+      imports: [AppComponent, RouterTestingModule],
     }).compileComponents();
   });
-
   it('should create the app', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app).toBeTruthy();
   });
-
-  it(`should have the 'ets-client' title`, () => {
+  it(`should have the 'gms-client' title`, () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
-    expect(app.title).toEqual('ets-client');
+    expect(app.title).toEqual('gms-client');
   });
-
   it('should render title', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Welcome to the MEAN Stack Starter Project');
+    expect(compiled.querySelector('h1')?.textContent).toContain(
+      'Gardening Management System'
+    );
   });
 });

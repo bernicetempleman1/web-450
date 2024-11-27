@@ -1,62 +1,32 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-
-@Component({
-  selector: 'app-root',
-  standalone: true,
-  imports: [RouterOutlet],
-  template: `
-    <div class="container">
-      <header>
-        <h1>Welcome to the MEAN Stack Starter Project</h1>
-      </header>
-      <nav>
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
-      </nav>
-      <main>
-        <section>
-          <router-outlet />
-        </section>
-      </main>
-      <footer>
-        <p>&copy; 2024 MEAN Stack Project</p>
-      </footer>
-    </div>
-  `,
-  styles: `
-    .container {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      text-align: center;
-      padding: 0;
-      margin: 0 auto;
-    }
-
-    header, footer {
-      background-color: #f8f9fa;
-      padding: 10px 0;
-    }
-
-    nav ul {
-      list-style-type: none;
-      padding: 0;
-    }
-
-    nav ul li {
-      display: inline;
-      margin-right: 10px;
-    }
-
-    main {
-      flex: 1;
-    }
-  `
-})
-export class AppComponent {
-  title = 'ets-client';
-}
+<div class="container">
+  <header class="header">
+    <h1 class="header__title">Gardening Management System</h1>
+  </header>
+  <nav class="navbar">
+    <ul class="navbar__list">
+      <li class="navbar__item">
+        <a class="navbar__link" routerLink="/">
+          <i class="fas fahome"></i> Home
+        </a>
+      </li>
+      <li class="navbar__item">
+        <a class="navbar__link" routerLink="/gardens">
+          <i class="fas fa-seedling"></i> Gardens
+        </a>
+      </li>
+      <li class="navbar__item">
+        <a class="navbar__link" routerLink="/plants">
+          <i class="fas fa-leaf"></i> Plants
+        </a>
+      </li>
+    </ul>
+  </nav>
+  <main class="main">
+    <section class="main__section">
+      <router-outlet></router-outlet>
+    </section>
+  </main>
+  <footer class="footer">
+    <p class="footer__text">&copy; 2024 MEAN Stack Project</p>
+  </footer>
+</div>;
