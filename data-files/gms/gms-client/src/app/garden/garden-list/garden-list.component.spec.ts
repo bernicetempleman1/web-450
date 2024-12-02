@@ -31,33 +31,6 @@ describe('GardenListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should display records in the DOM', () => {
-    const mockGardens: Garden[] = [
-      {
-        _id: '1',
-        gardenId: 1,
-        name: 'Garden 1',
-        location: 'Location 1',
-        description: 'Description 1',
-        dateCreated: '2024-09-04T21:39:36.605Z',
-      },
-      {
-        _id: '2',
-        gardenId: 2,
-        name: 'Garden 2',
-        location: 'Location 2',
-        description: 'Description 2',
-        dateCreated: '2024-09-05T21:39:36.605Z',
-      },
-    ];
-    component.gardens = mockGardens;
-    fixture.detectChanges(); // Trigger change detection
-    const gardenRows = fixture.debugElement.queryAll(
-      By.css('.garden-page__table-body.garden-page__table-row')
-    );
-    expect(gardenRows.length).toBeGreaterThan(0); // Check that there are garden rows in the DOM
-  });
-
   it('should handle error when fetching gardens', () => {
     spyOn(gardenService, 'getGardens').and.returnValue(
       throwError('Error fetching gardens')

@@ -8,7 +8,6 @@ import { GardenService } from '../garden.service';
 import { AddGardenDTO, Garden } from '../garden';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { AddGardenDTO } from '../garden';
 
 describe('GardenAddComponent', () => {
   let component: GardenAddComponent;

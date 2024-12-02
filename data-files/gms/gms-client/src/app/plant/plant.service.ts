@@ -20,9 +20,9 @@ export class PlantService {
     );
   }
 
-  addPlant(plant: AddPlantDTO) {
-    return this.http.post<Plant>(`${environment.apiBaseUrl}/api/plants`, plant);
-  }
+  addPlant(gardenId: number, plant: AddPlantDTO) {
+    return this.http.post<Plant>(`${environment.apiBaseUrl}/api/plants/${gardenId}`, plant);
+    }
 
   updatePlant(plantId: string, updatePlant: UpdatePlantDTO) {
     return this.http.patch<Plant>(
@@ -30,7 +30,7 @@ export class PlantService {
       updatePlant
     );
   }
-  
+
   deletePlant(plantId: string) {
     return this.http.delete(`${environment.apiBaseUrl}/api/plants/${plantId}`);
   }

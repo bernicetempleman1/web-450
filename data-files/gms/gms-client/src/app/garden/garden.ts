@@ -8,8 +8,8 @@ interface Garden {
   dateModified?: string;
   }
 
-type UpdateGardenDTO = Omit<Garden, '_id' & 'gardenId' & 'dateCreated' & 'dateModified'>;
-type AddGardenDTO = Omit<Garden, '_id' & 'dateModified'>;
+type UpdateGardenDTO = Omit<Garden, '_id' | 'gardenId' | 'dateCreated' | 'dateModified'>;
+type AddGardenDTO = Omit<Garden, '_id' | 'dateModified' | 'gardenId'>;
 
 
 export { Garden, AddGardenDTO, UpdateGardenDTO };

@@ -3,16 +3,41 @@ import { PlantService } from '../plant.service';
 import { Plant } from '../plant';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { HighlightRecentDirective } from '../highlight-recent.directive';
+
 @Component({
   selector: 'app-plant-list',
   standalone: true,
-  imports: [RouterLink, CommonModule],
+  imports: [RouterLink, CommonModule, FormsModule, HighlightRecentDirective],
   template: `
     <div class="plant-page">
       <h1 class="plant-page__title">Plant List</h1>
+
+      <div class="plant-page__filter-container">
+        <select [(ngModel)]="filterType" class="plant-page__filter">
+          <option value="">All</option>
+          <option value="Vegetable">Vegetable</option>
+          <option value="Flower">Flower</option>
+          <option value="Herb">Herb</option>
+          <option value="Tree">Tree</option>
+        </select>
+        <input
+          type="button"
+          (click)="filterPlants()"
+          value="Filter Plants"
+          class="plantpage__filter-button"
+        />
+      </div>
       <button class="plant-page__button" routerLink="/plants/add">
         Add Plant
       </button>
+      <div class="plant-page__highlight-info">
+        <p>
+          Rows highlighted in green indicate plants that were planted within the
+          last 30 days.
+        </p>
+      </div>
       @if (serverMessage) {
       <div
         [ngClass]="{
@@ -35,7 +60,11 @@ import { RouterLink } from '@angular/router';
           </tr>
         </thead>
         <tbody class="plant-page__table-body">
-          <tr *ngFor="let plant of plants" class="plant-page__table-row">
+          @for (plant of plants; track plant) {
+          <tr
+            class="plant-page__table-row"
+            [appHighlightRecent]="plant.datePlanted ?? ''"
+          >
             <td class="plant-page__table-cell">{{ plant._id }}</td>
             <td class="plant-page__table-cell">{{ plant.name }}</td>
             <td class="plant-page__table-cell">{{ plant.type }}</td>
@@ -50,13 +79,11 @@ import { RouterLink } from '@angular/router';
                 ><i class="fas fa-edit"></i
               ></a>
               <a (click)="deletePlant(plant._id)" class="plant-page__icon-link"
-                ><i
-                  class="fas fatrash-
-alt"
-                ></i
+                ><i class="fas fa-trash-alt"></i
               ></a>
             </td>
           </tr>
+          }
         </tbody>
       </table>
       } @else {
@@ -81,7 +108,7 @@ width: 100%;
 border-collapse: collapse;
 }
 .plant-page__table-header {
-  background-color: #FFE484;
+background-color: #FFE484;
 color: #000;
 border: 1px solid black;
 padding: 5px;
@@ -142,16 +169,50 @@ color: #3c763d;
 background-color: #dff0d8;
 border-color: #d6e9c6;
 }
+.plant-page__filter-container {
+display: flex;
+align-items: center;
+margin-bottom: 1rem;
+}
+.plant-page__filter {
+flex: 1;
+padding: 0.5rem;
+margin-right: 0.5rem;
+}
+.plant-page__filter-button {
+background-color: #563d7c;
+color: #fff;
+border: none;
+padding: 10px 20px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+margin: 10px 2px;
+cursor: pointer;
+border-radius: 5px;
+transition: background-color 0.3s;
+}
+.plant-page__filter-button:hover {
+background-color: #6c757d;
+}
+.plant-page__highlight-info {
+text-align: center;
+color: #6c757d;
+margin-bottom: 1rem;
+}
 `,
 })
 export class PlantListComponent {
+  allPlants: Plant[] = [];
   plants: Plant[] = [];
+  filterType: string = '';
   serverMessage: string | null = null;
   serverMessageType: 'success' | 'error' | null = null;
   constructor(private plantService: PlantService) {
     this.plantService.getPlants().subscribe({
       next: (plants: Plant[]) => {
         this.plants = plants;
+        this.allPlants = plants;
         console.log(`Plants: ${JSON.stringify(this.plants)}`);
       },
       error: (err: any) => {
@@ -159,6 +220,15 @@ export class PlantListComponent {
         this.plants = [];
       },
     });
+  }
+  filterPlants() {
+    if (this.filterType === '') {
+      this.plants = this.allPlants;
+      return;
+    }
+    this.plants = this.allPlants.filter(
+      (plant) => plant.type === this.filterType
+    );
   }
   deletePlant(plantId: string) {
     if (!confirm('Are you sure you want to delete this plant?')) {
@@ -169,6 +239,7 @@ export class PlantListComponent {
         console.log(`Plant with ID ${plantId} deleted successfully`);
         this.plants = this.plants.filter((p) => p._id !== plantId);
         this.serverMessageType = 'success';
+        this.serverMessage = `Plant with ID ${plantId} deleted successfully`;
         this.clearMessageAfterDelay();
       },
       error: (err: any) => {
@@ -176,8 +247,7 @@ export class PlantListComponent {
           `Error occurred while deleting plant with ID ${plantId}: ${err}`
         );
         this.serverMessageType = 'error';
-        this.serverMessage = `Error occurred while deleting plant with ID ${plantId}. Please try
-again later.`;
+        this.serverMessage = `Error occurred while deleting plant with ID ${plantId}. Please try again later.`;
         this.clearMessageAfterDelay();
       },
     });

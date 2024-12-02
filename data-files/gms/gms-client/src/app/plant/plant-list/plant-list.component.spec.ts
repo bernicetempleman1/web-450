@@ -1,88 +1,128 @@
-import { Component } from '@angular/core';
+
+import { PlantListComponent } from './plant-list.component';
 import { PlantService } from '../plant.service';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import {
+  ComponentFixture,
+  TestBed,
+  fakeAsync,
+  tick,
+} from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import { of, throwError } from 'rxjs';
+import { ActivatedRoute } from '@angular/router';
 import { Plant } from '../plant';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
-@Component({
-  selector: 'app-plant-list',
-  standalone: true,
-  imports: [RouterLink, CommonModule],
-  template: `
-    <div class="plant-page">
-      <h1 class="plant-page__title">Plant List</h1>
-      @if (plants && plants.length > 0) {
-      <table class="plant-page__table">
-        <thead class="plant-page__table-head">
-          <tr class="plant-page__table-row">
-            <th class="plant-page__table-header">Plant ID</th>
-            <th class="plant-page__table-header">Name</th>
-            <th class="plant-page__table-header">Type</th>
-            <th class="plant-page__table-header">Status</th>
-            <th class="plant-page__table-header">Date Planted</th>
-            <th class="plant-page__table-header">Functions</th>
-          </tr>
-        </thead>
-        <tbody class="plant-page__table-body">
-          <tr *ngFor="let plant of plants" class="plant-page__table-row">
-            <td class="plant-page__table-cell">{{ plant._id }}</td>
-            <td class="plant-page__table-cell">{{ plant.name }}</td>
-            <td class="plant-page__table-cell">{{ plant.type }}</td>
-            <td class="plant-page__table-cell">{{ plant.status }}</td>
-            <td class="plant-page__table-cell">{{ plant.datePlanted }}</td>
-            <td
-              class="plant-page__table-cell plant-page__table-cell--functions"
-            >
-              <a
-                routerLink="/plants/{{ plant._id }}"
-                class="plant-page__icon-link"
-                ><i class="fas fa-edit"></i
-              ></a>
-              <a (click)="deletePlant(plant._id)" class="plant-page__icon-link"
-                ><i
-                  class="fas fatrash-
-alt"
-                ></i
-              ></a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-      } @else {
-      <p class="plant-page__no-plants">
-        No plants found, consider adding one...
-      </p>
-      }
-    </div>
-  `,
-})
-export class PlantListComponent {
-  plants: Plant[] = [];
-  constructor(private plantService: PlantService) {
-    this.plantService.getPlants().subscribe({
-      next: (plants: Plant[]) => {
-        this.plants = plants;
-        console.log(`Plants: ${JSON.stringify(this.plants)}`);
+import { By } from '@angular/platform-browser';
+import { Garden } from '../../garden/garden';
+
+describe('PlantListComponent', () => {
+  let component: PlantListComponent;
+  let fixture: ComponentFixture<PlantListComponent>;
+  let plantService: PlantService;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule,
+        RouterTestingModule,
+        PlantListComponent,
+      ], //import PlantListComponent
+      providers: [PlantService],
+    }).compileComponents();
+    fixture = TestBed.createComponent(PlantListComponent);
+    component = fixture.componentInstance;
+    plantService = TestBed.inject(PlantService);
+  });
+
+  it('should create', () => {
+    expect(component).toBeTruthy();
+  });
+
+
+
+  it('should handle error when fetching plants', () => {
+    spyOn(plantService, 'getPlants').and.returnValue(
+      throwError('Error fetching plants')
+    );
+    fixture.detectChanges(); // Trigger the component's constructor
+    expect(component.plants.length).toBe(0);
+  });
+
+  it('should delete a plant', () => {
+    const mockPlants: Plant[] = [
+      {
+        _id: '1',
+        gardenId: 1,
+        name: 'Rose',
+        type: 'Flower',
+        status: 'Planted',
+        datePlanted: '2023-01-01',
       },
-      error: (err: any) => {
-        console.error(`Error occurred while retrieving plants: ${err}`);
-        this.plants = [];
+      {
+        _id: '2',
+        gardenId: 1,
+        name: 'Tulip',
+        type: 'Flower',
+        status: 'Planted',
+        datePlanted: '2023-01-02',
       },
-    });
-  }
-  deletePlant(plantId: string) {
-    if (!confirm('Are you sure you want to delete this plant?')) {
-      return;
-    }
-    this.plantService.deletePlant(plantId).subscribe({
-      next: () => {
-        console.log(`Plant with ID ${plantId} deleted successfully`);
-        this.plants = this.plants.filter((p) => p._id !== plantId);
+    ];
+    spyOn(window, 'confirm').and.returnValue(true);
+    spyOn(plantService, 'deletePlant').and.returnValue(of({}));
+    component.plants = mockPlants;
+    component.deletePlant('1');
+    fixture.detectChanges(); // Update the view with the deletion state
+    expect(component.plants.length).toBe(1);
+    expect(component.plants[0]._id).toBe('2');
+  });
+
+  it('should filter plants based on filter type', () => {
+    const mockPlants: Plant[] = [
+      {
+        _id: '1',
+        gardenId: 1,
+        name: 'Rose',
+        type: 'Flower',
+        status: 'Planted',
+        datePlanted: '2023-01-01',
       },
-      error: (err: any) => {
-        console.error(
-          `Error occurred while deleting plant with ID ${plantId}: ${err}`
-        );
+      {
+        _id: '2',
+        gardenId: 1,
+        name: 'Tulip',
+        type: 'Flower',
+        status: 'Planted',
+        datePlanted: '2023-01-02',
       },
-    });
-  }
-}
+      {
+        _id: '3',
+        gardenId: 1,
+        name: 'Carrot',
+        type: 'Vegetable',
+        status: 'Planted',
+        datePlanted: '2023-01-03',
+      },
+    ];
+    component.plants = mockPlants;
+    component.allPlants = mockPlants;
+    fixture.detectChanges(); // Trigger change detection
+    component.filterType = 'Flower';
+    component.filterPlants();
+    fixture.detectChanges(); // Trigger change detection
+    expect(component.plants.length).toBe(2);
+    expect(component.plants[0].name).toBe('Rose');
+    expect(component.plants[1].name).toBe('Tulip');
+    component.filterType = 'Vegetable';
+    component.filterPlants();
+    fixture.detectChanges(); // Trigger change detection
+    expect(component.plants.length).toBe(1);
+    expect(component.plants[0].name).toBe('Carrot');
+    component.filterType = '';
+    component.filterPlants();
+    fixture.detectChanges(); // Trigger change detection
+    expect(component.plants.length).toBe(3);
+  });
+});

@@ -1,5 +1,3 @@
-
-
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import {
@@ -11,6 +9,7 @@ import {
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { GardenService } from '../garden.service';
 import { Garden, UpdateGardenDTO } from '../garden';
+
 @Component({
   selector: 'app-garden-details',
   standalone: true,

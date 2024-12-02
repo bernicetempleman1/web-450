@@ -70,9 +70,9 @@ describe('GardenService', () => {
   });
 
   it('should add a new garden', () => {
-    const newGarden: AddGardenDTO = {
-      _id: '3',
-      gardenId: 3,
+    const newGarden: Garden = {
+
+      _id: '3', gardenId: 3,
       name: 'Garden 3',
       location: 'Location 3',
       description: 'Description 3',

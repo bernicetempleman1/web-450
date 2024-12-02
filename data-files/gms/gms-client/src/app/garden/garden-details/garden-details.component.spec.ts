@@ -13,7 +13,7 @@ import { GardenService } from '../garden.service';
 import { Garden, UpdateGardenDTO } from '../garden';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { UpdateGardenDTO } from '../garden';
+
 
 describe('GardenDetailsComponent', () => {
   let component: GardenDetailsComponent;
